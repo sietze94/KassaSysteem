@@ -13,7 +13,7 @@ import java.util.*;
 
 public class JsonParser {
     JSONParser parser = new JSONParser();
-    LinkedList<Product> placeholder_colll = new LinkedList<>();
+    private LinkedList<Product> placeholder_coll = new LinkedList<>(); // initial placeholder for the data
 
 
     public void readFile(String filename){
@@ -48,21 +48,23 @@ public class JsonParser {
                 Product product = new Product(p_name, p_brand,p_barcode,p_price);
 
                 // voeg het product toe aan de collectie
-                placeholder_colll.add(product);
+                placeholder_coll.add(product);
 
             } else {
                 // er is wel een houdbaarheids datum voor dit product
                 Product perishable_prod = new PerishableProduct(p_name,p_brand,p_barcode,p_price,p_valid_thru);
 
                 // voeg het product toe aan de collectie.
-                placeholder_colll.add(perishable_prod);
+                placeholder_coll.add(perishable_prod);
 
             }
         }
         System.out.println(" ## Notification : JsonParer : data successfully loaded and transformed into a collection");
-     } // end of storeDataInCollectiokn
+     } // end of storeDataInCollection
 
-    public LinkedList<Product> getDataCollection(){
-        return placeholder_colll;
+    // getter method for other classes to call the data inside this parser
+    public LinkedList<Product> ParserGetDataCollection(){
+        return placeholder_coll;
     }
+
 }

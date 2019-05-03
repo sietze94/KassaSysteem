@@ -1,4 +1,4 @@
-// Date 28-04-2019
+// Date 28-04-2019, last modified : 01-05-2019
 // Author : Sietze Min
 // Description :
 /*
@@ -25,12 +25,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import java.io.File;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.*;
-import javafx.scene.media.Media;
-
-import javax.sound.sampled.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
@@ -41,14 +35,12 @@ public class View extends Application {
     private static LinkedList<Product> data_collection = new LinkedList<>();
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private static ArrayList<String> customerReceipt = new ArrayList<>();
-    private MediaPlayer player;
-    private static final String media_url ="beep.mp3";
-
+    String s_current_user = "Sietze Min";
     String current_product_name = "-";
     String current_product_brand = "-";
     String current_product_barcode = "-";
     String current_product_valid_thru = "-";
-    String receipt_text = "lorem";
+    String current_date_time;
 
     String next_product_name = "Volgende product op de loopband :";
     String previous_product_name = "";
@@ -56,13 +48,38 @@ public class View extends Application {
     Product current_product;
     Product previous_product;
     Product next_product;
-
-//    private int counter2 = 0;
+    Controller controller;
     private int counter = 0;
     private double total_price;
 
+    Label LdynamicCurrentProduct;
+
+//    public void setController(Controller controller){
+//        this.controller = controller;
+//        System.out.println(controller.testString);
+//    }
+
+    public void setDataCollection(LinkedList<Product> collection) {
+        data_collection = collection;
+    }
+
+
+    public void testViewData(){
+        System.out.println(data_collection.get(0).product_name);
+    }
+
+    public void nextCustomer(){
+        customerReceipt.clear();
+        total_price = 0.00;
+        current_product_name = "-";
+        controller.BtnNextCustomer(); // tijdelijk
+
+
+    }
+
     @Override
     public void start(Stage primaryStage){
+
         GridPane root = new GridPane();
         root.getColumnConstraints().add(new ColumnConstraints(400)); // column 0 is 100 wide
         root.getColumnConstraints().add(new ColumnConstraints(400)); // column 1 is 100 wide
@@ -83,9 +100,9 @@ public class View extends Application {
         root.setValignment(LRegisterNumber, VPos.TOP);
 
 
-        Label Larea3 = new Label("Tijd : 16:04:22 / 01-02-2019");
-        root.setHalignment(Larea3, HPos.CENTER);
-        root.setValignment(Larea3, VPos.TOP);
+        Label LCurrentDateTime = new Label("Datum : " + current_date_time);
+        root.setHalignment(LCurrentDateTime, HPos.CENTER);
+        root.setValignment(LCurrentDateTime, VPos.TOP);
 
         // Rij 1
         Label LpreviouslyScannedProd = new Label("Laatst gescanned : ");
@@ -97,8 +114,8 @@ public class View extends Application {
         Button BtnPrintReceipt = new Button("Print bon");
         BtnPrintReceipt.setMinWidth(200);
         BtnPrintReceipt.setMinHeight(50);
-
         root.setHalignment(BtnPrintReceipt, HPos.CENTER);
+        BtnPrintReceipt.setOnAction(e -> controller.BtnModelPrintReceipt(total_price));
 
         // Rij 2
         Label LdynamicCurrentProduct = new Label("Huidig product 1");
@@ -112,6 +129,7 @@ public class View extends Application {
         BtnPaymentMethodCredit.setMinWidth(200);
         BtnPaymentMethodCredit.setMinHeight(50);
         root.setHalignment(BtnPaymentMethodCredit, HPos.CENTER);
+        BtnPaymentMethodCredit.setOnAction(e -> controller.PaymentAccepted("Pin"));
 
         // Rij 4
         Label LprevScannedBarcode = new Label("Barcode : ");
@@ -121,6 +139,8 @@ public class View extends Application {
         BtnPaymentMethodCash.setMinWidth(200);
         BtnPaymentMethodCash.setMinHeight(50);
         root.setHalignment(BtnPaymentMethodCash, HPos.CENTER);
+        BtnPaymentMethodCash.setOnAction(e -> controller.PaymentAccepted("Cash"));
+
 
         Button BtnScanProduct = new Button("SCAN");
         BtnScanProduct.setMinWidth(200);
@@ -137,6 +157,7 @@ public class View extends Application {
         BtnNextCustomer.setMinWidth(200);
         BtnNextCustomer.setMinHeight(50);
         root.setHalignment(BtnNextCustomer, HPos.CENTER);
+        BtnNextCustomer.setOnAction(e -> nextCustomer());
 
         // Rij 6
         Label LcurrentReceiptTF = new Label("Huidige klant bon");
@@ -156,7 +177,7 @@ public class View extends Application {
         root.setHalignment(LDyanmicTotalAmount, HPos.CENTER);
         root.setValignment(LDyanmicTotalAmount, VPos.TOP);
 
-        Label LcurrentUser = new Label("Medewerker : Sietze Min");
+        Label LcurrentUser = new Label("Medewerker :" + s_current_user);
         root.setHalignment(LcurrentUser, HPos.CENTER);
 
         // Rij 8
@@ -178,7 +199,7 @@ public class View extends Application {
         // Rij 0
         root.add(LproductToCome, 0,0);
         root.add(LRegisterNumber, 1,0);
-        root.add(Larea3, 2,0);
+        root.add(LCurrentDateTime, 2,0);
 
         // Rij 2
         root.add(LpreviouslyScannedProd,0,1);
@@ -221,12 +242,14 @@ public class View extends Application {
                                 LprevScannedBarcode.setText("Product barcode :" + current_product_barcode);
                                 LprevValidThru.setText("Product houdbaar tot :" + current_product_valid_thru);
 
+                                LCurrentDateTime.setText(controller.ModelGetDateTime());
+
                                 LproductToCome.setText("Volgende product : " + next_product_name);
                                 LpreviouslyScannedProd.setText("Laatst gescanned : " +previous_product_name);
                                 String s_price = df2.format(total_price);
 
                                 TfcurrentReceipt.setText(customerReceipt.toString() + "\n");
-
+//                                LcurrentUser.setText(s_current_user);
                                 // pas de prijs aan.
                                 LDyanmicTotalAmount.setText(s_price);
 
@@ -240,12 +263,13 @@ public class View extends Application {
             }
         }).start();
 
+        // Should be inside the controller
         String first_product = data_collection.get(counter).product_name;
-        double first_product_price = data_collection.get(counter).product_price;
         next_product_name = data_collection.get(counter + 1).product_name;
         current_product_name = first_product;
-//        String first_entry_on_receipt = first_product + " $ " +
-        customerReceipt.add(first_product + " $ " + first_product_price + "\n");
+
+        // Set controller
+        controller = new Controller(new Model(), new View());
 
         Scene scene = new Scene(root, 1200,700);
         primaryStage.setTitle("KassaSysteem SietzeKassa");
@@ -257,21 +281,22 @@ public class View extends Application {
         View.launch();
     }
 
-    public void getDataFromMain(LinkedList<Product> collection){
-        View.data_collection = collection;
-        System.out.println("data is nu gezet" + data_collection.get(0).product_name);
-    }
-
     public int showNum(){
         counter++;
         return counter;
     }
 
-    // Button handler methods
-    private synchronized void ActScanProduct(){
+
+    // BUTTON HANDLER CLASSES
+    /*
+    Handles all the view objects that change when the scan button is pressed.
+    Updates all String fields.
+    -> The platform.Runlater thread will keep running to update the view by the strings fields.
+    This should be handled inside the controller class.
+     */
+    public synchronized void ActScanProduct(){
         System.out.println("SCAN button is pressed ");
         int product_index = showNum();
-
         current_product = data_collection.get(product_index);
 
         if(current_product instanceof PerishableProduct){
@@ -289,12 +314,15 @@ public class View extends Application {
         current_product_barcode = current_product.product_barcode;
 
         next_product_name = next_product.product_name;
-        total_price += current_product.product_price;
+        total_price += previous_product.product_price;
         System.out.println(total_price);
 
         // voeg het huidige gescande product toe aan de bon.
-        addToReceipt(current_product_name, current_product.product_price);
-        Controller.playSound(media_url);
+//        addToReceipt(previous_product_name, previous_product.product_price);
+
+        controller.addProductToReceipt(previous_product_name,previous_product.product_price);
+        customerReceipt = controller.ModelUpdateReceipt();
+        controller.playSound();
     }
 
     public void addToReceipt(String name, double price){
