@@ -14,10 +14,9 @@ import javafx.application.Application;
 import java.util.LinkedList;
 
 public class KassaMain {
-    LinkedList<Product> data_collection;
     View view; // local referrence to the view obj
-    Model model;
-    Controller controller; // local referrence to the controller obj
+    Model model = new Model();
+    private static Controller controller = new Controller(); // local referrence to the controller obj
 
     public static void main(String[] args){
         // // kickstart the program
@@ -30,10 +29,12 @@ public class KassaMain {
         System.out.println("End of line");
     }
 
-    /*
-    Creates the view object, and starts a thread to execute the view.
-    Start another thread to initially pass the data to the view object. (this needs to be in the controller)
-     */
+    // for other classes to acces the controller (should only be 1 controller, singleton ?)
+    public static Controller getControllerMain(){
+        return controller;
+    }
+
+    // Creates the view object, and starts a thread to execute the view.
     public void Main(){
         System.out.println("## Init : Booting : JsonParser");
         JsonParser parser = new JsonParser();
@@ -41,27 +42,21 @@ public class KassaMain {
 
         System.out.println("### 01 Main boots View");
         this.view = new View();
-        this.model = new Model();
+        controller.setView(view);
 
         System.out.println("### 02 Main creates controller object with model as arg");
-        this.controller = new Controller(model,view);
+        controller.setModel(model);
 
         System.out.println("### 03 Data uit parser wordt via controller naar de model gestuurt");
         controller.GetDataFromParserToModel(parser.ParserGetDataCollection());
-        controller.sendDataToView(); // View haalt de data rechtstreeks uit de controller.
-//        view.setController(controller);
-
+//        controller.sendDataToView(); // View retrieves a local copy from the data to work with, (should not be needed)
         Thread mainThread = new Thread(new Runnable(){
             @Override
             public void run(){
                 System.out.println("Starting consumer thread");
-//                System.out.println(view.controller1.testString);
                 view.showView();
-
             }
         });
-
         mainThread.start();
-
     }
 }

@@ -15,11 +15,10 @@ public class JsonParser {
     JSONParser parser = new JSONParser();
     private LinkedList<Product> placeholder_coll = new LinkedList<>(); // initial placeholder for the data
 
-
     public void readFile(String filename){
         try {
             // Try and read the data file
-            Object obj = parser.parse(new FileReader("/Users/sietzemin/IdeaProjects/fxtest2/src/KassaSysteem/data.json"));
+            Object obj = parser.parse(new FileReader("/Users/sietzemin/IdeaProjects/fxtest2/src/KassaSysteem/" + filename));
 
             // Store data into a collection
             storeDataInCollection(obj);

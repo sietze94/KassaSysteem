@@ -7,20 +7,26 @@ public class Model {
     private static ArrayList<String> customerReceipt = new ArrayList<>();
     private LinkedList<Product> model_data_collection;
     SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-    String dateString = format.format(new Date());
+    private String dateString = format.format(new Date());
 
-    public int minute;
-    public int hour;
-    public int second;
+//    String current_product_name;
+    private int minute;
+    private int hour;
+    private int second;
 
     // customer variables
     boolean hasPaid = false;
 
-    public Model(){
+    // Data
+    private double total_price = 0;
 
-    }
+    //setters and other methods
+    public Product getProduct(int index){ return model_data_collection.get(index); }
 
-    //setters
+    public double getTotalPrice(){ return total_price; }
+
+    public void setTotalPrice(double price){ total_price += price; }
+
     public void addToCustomerReceipt(String s){
         customerReceipt.add(s);
     }
@@ -47,16 +53,18 @@ public class Model {
         return customerReceipt.get(0);
     }
 
-    public ArrayList<String> getWholeReceipt(){
-        return customerReceipt;
-    }
+    public ArrayList<String> getWholeReceipt(){ return customerReceipt; }
 
+    public void setReceipt(String s){ customerReceipt.add(s); }
+
+    public void clearReceipt(){ customerReceipt.clear(); }
+
+    public void clearTotalPrice(){total_price = 0.00;}
     public String getDate(){
         return dateString;
     }
 
     public String getTime(){
-//        Dateformat dateFormat = new SimpleDateFormat("hh:mm a");
         second = LocalDateTime.now().getSecond();
         minute = LocalDateTime.now().getMinute();
         hour = LocalDateTime.now().getHour();
@@ -69,10 +77,13 @@ public class Model {
         s_hour = s_hour.valueOf(hour);
 
         if(second < 10 && minute < 10){
-            return s_hour + ": 0" + s_minute + ": 0" + s_second;
+            return s_hour + ":0" + s_minute + ":0" + s_second;
         }
         if(minute < 10){
-            return s_hour + ": 0" + s_minute + ":" + s_second;
+            return s_hour + ":0" + s_minute + ":" + s_second;
+        }
+        if(second < 10){
+            return s_hour + ":" + s_minute +":0" + s_second;
         }
         return s_hour + ":" + s_minute + ":" + s_second;
     }

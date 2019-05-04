@@ -32,55 +32,16 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class View extends Application {
-    private static LinkedList<Product> data_collection = new LinkedList<>();
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private static ArrayList<String> customerReceipt = new ArrayList<>();
-    String s_current_user = "Sietze Min";
-    String current_product_name = "-";
-    String current_product_brand = "-";
-    String current_product_barcode = "-";
-    String current_product_valid_thru = "-";
-    String current_date_time;
-
-    String next_product_name = "Volgende product op de loopband :";
-    String previous_product_name = "";
-
-    Product current_product;
-    Product previous_product;
-    Product next_product;
-    Controller controller;
-    private int counter = 0;
     private double total_price;
-
-    Label LdynamicCurrentProduct;
-
-//    public void setController(Controller controller){
-//        this.controller = controller;
-//        System.out.println(controller.testString);
-//    }
-
-    public void setDataCollection(LinkedList<Product> collection) {
-        data_collection = collection;
-    }
-
-
-    public void testViewData(){
-        System.out.println(data_collection.get(0).product_name);
-    }
-
-    public void nextCustomer(){
-        customerReceipt.clear();
-        total_price = 0.00;
-        current_product_name = "-";
-        controller.BtnNextCustomer(); // tijdelijk
-
-
-    }
+    Controller controller = KassaMain.getControllerMain(); // assign controller to local reference
+    String s_current_user = "Sietze Min";
 
     @Override
     public void start(Stage primaryStage){
-
         GridPane root = new GridPane();
+        String current_product_name = controller.getModelProduct(0).product_name;
         root.getColumnConstraints().add(new ColumnConstraints(400)); // column 0 is 100 wide
         root.getColumnConstraints().add(new ColumnConstraints(400)); // column 1 is 100 wide
         root.getColumnConstraints().add(new ColumnConstraints(400)); // column 2 is 100 wide
@@ -100,7 +61,7 @@ public class View extends Application {
         root.setValignment(LRegisterNumber, VPos.TOP);
 
 
-        Label LCurrentDateTime = new Label("Datum : " + current_date_time);
+        Label LCurrentDateTime = new Label("Datum : ");
         root.setHalignment(LCurrentDateTime, HPos.CENTER);
         root.setValignment(LCurrentDateTime, VPos.TOP);
 
@@ -115,10 +76,10 @@ public class View extends Application {
         BtnPrintReceipt.setMinWidth(200);
         BtnPrintReceipt.setMinHeight(50);
         root.setHalignment(BtnPrintReceipt, HPos.CENTER);
-        BtnPrintReceipt.setOnAction(e -> controller.BtnModelPrintReceipt(total_price));
+        BtnPrintReceipt.setOnAction(e -> controller.btnModelPrintReceipt());
 
         // Rij 2
-        Label LdynamicCurrentProduct = new Label("Huidig product 1");
+        Label LdynamicCurrentProduct = new Label(current_product_name);
         root.setHalignment(LdynamicCurrentProduct,HPos.CENTER);
 
         // Rij 3
@@ -129,7 +90,7 @@ public class View extends Application {
         BtnPaymentMethodCredit.setMinWidth(200);
         BtnPaymentMethodCredit.setMinHeight(50);
         root.setHalignment(BtnPaymentMethodCredit, HPos.CENTER);
-        BtnPaymentMethodCredit.setOnAction(e -> controller.PaymentAccepted("Pin"));
+        BtnPaymentMethodCredit.setOnAction(e -> controller.btnPaymentAccepted("Pin"));
 
         // Rij 4
         Label LprevScannedBarcode = new Label("Barcode : ");
@@ -139,14 +100,14 @@ public class View extends Application {
         BtnPaymentMethodCash.setMinWidth(200);
         BtnPaymentMethodCash.setMinHeight(50);
         root.setHalignment(BtnPaymentMethodCash, HPos.CENTER);
-        BtnPaymentMethodCash.setOnAction(e -> controller.PaymentAccepted("Cash"));
+        BtnPaymentMethodCash.setOnAction(e -> controller.btnPaymentAccepted("Cash"));
 
 
         Button BtnScanProduct = new Button("SCAN");
         BtnScanProduct.setMinWidth(200);
         BtnScanProduct.setMinHeight(50);
         root.setHalignment(BtnScanProduct, HPos.CENTER);
-        BtnScanProduct.setOnAction(e -> ActScanProduct());
+        BtnScanProduct.setOnAction(e -> controller.btnScan());
 
         // Rij 5
         Label LprevValidThru = new Label("Houdbaar tot : ");
@@ -157,7 +118,7 @@ public class View extends Application {
         BtnNextCustomer.setMinWidth(200);
         BtnNextCustomer.setMinHeight(50);
         root.setHalignment(BtnNextCustomer, HPos.CENTER);
-        BtnNextCustomer.setOnAction(e -> nextCustomer());
+        BtnNextCustomer.setOnAction(e -> controller.btnNextCustomer());
 
         // Rij 6
         Label LcurrentReceiptTF = new Label("Huidige klant bon");
@@ -237,22 +198,19 @@ public class View extends Application {
                         Platform.runLater(new Runnable(){
                             @Override
                             public void run(){
-                                LdynamicCurrentProduct.setText(current_product_name);
-                                LprevScannedBrand.setText("Product merk : " + current_product_brand);
-                                LprevScannedBarcode.setText("Product barcode :" + current_product_barcode);
-                                LprevValidThru.setText("Product houdbaar tot :" + current_product_valid_thru);
+                                LdynamicCurrentProduct.setText(controller.getCurrentProductName());
+                                LprevScannedBrand.setText("Product merk : " + controller.getModelPrevProductDetails()[1]);
+                                LprevScannedBarcode.setText("Product barcode :" + controller.getModelPrevProductDetails()[2]);
+                                LpreviouslyScannedProd.setText("Laatst gescanned : " + controller.getModelPrevProductDetails()[0]);
+                                LprevValidThru.setText("Product houdbaar tot :" + controller.getModelPrevProductDetails()[3]);
 
-                                LCurrentDateTime.setText(controller.ModelGetDateTime());
+                                LCurrentDateTime.setText(controller.GetModelDateTime());
 
-                                LproductToCome.setText("Volgende product : " + next_product_name);
-                                LpreviouslyScannedProd.setText("Laatst gescanned : " +previous_product_name);
-                                String s_price = df2.format(total_price);
+                                LproductToCome.setText("Volgende product : " + controller.getModelNextProductName());
+                                String s_price = df2.format(controller.getModelTotalPrice());
 
-                                TfcurrentReceipt.setText(customerReceipt.toString() + "\n");
-//                                LcurrentUser.setText(s_current_user);
-                                // pas de prijs aan.
+                                TfcurrentReceipt.setText(controller.getModelCustomerReceipt().toString() + "\n");
                                 LDyanmicTotalAmount.setText(s_price);
-
                             }
                         });
                         Thread.sleep(200);
@@ -260,16 +218,10 @@ public class View extends Application {
                 }
                 catch(InterruptedException ex){
                 }
+                LdynamicCurrentProduct.setText("Hello");
+
             }
         }).start();
-
-        // Should be inside the controller
-        String first_product = data_collection.get(counter).product_name;
-        next_product_name = data_collection.get(counter + 1).product_name;
-        current_product_name = first_product;
-
-        // Set controller
-        controller = new Controller(new Model(), new View());
 
         Scene scene = new Scene(root, 1200,700);
         primaryStage.setTitle("KassaSysteem SietzeKassa");
@@ -277,56 +229,5 @@ public class View extends Application {
         primaryStage.show();
     } // end of start method
 
-    public void showView(){
-        View.launch();
-    }
-
-    public int showNum(){
-        counter++;
-        return counter;
-    }
-
-
-    // BUTTON HANDLER CLASSES
-    /*
-    Handles all the view objects that change when the scan button is pressed.
-    Updates all String fields.
-    -> The platform.Runlater thread will keep running to update the view by the strings fields.
-    This should be handled inside the controller class.
-     */
-    public synchronized void ActScanProduct(){
-        System.out.println("SCAN button is pressed ");
-        int product_index = showNum();
-        current_product = data_collection.get(product_index);
-
-        if(current_product instanceof PerishableProduct){
-            current_product_valid_thru = ((PerishableProduct) current_product).product_valid_thru;
-        } else {
-            current_product_valid_thru = "";
-        }
-        next_product = data_collection.get(product_index + 1);
-
-        previous_product = data_collection.get(product_index - 1);
-        previous_product_name = previous_product.product_name;
-
-        current_product_name = current_product.product_name;
-        current_product_brand = current_product.product_brand;
-        current_product_barcode = current_product.product_barcode;
-
-        next_product_name = next_product.product_name;
-        total_price += previous_product.product_price;
-        System.out.println(total_price);
-
-        // voeg het huidige gescande product toe aan de bon.
-//        addToReceipt(previous_product_name, previous_product.product_price);
-
-        controller.addProductToReceipt(previous_product_name,previous_product.product_price);
-        customerReceipt = controller.ModelUpdateReceipt();
-        controller.playSound();
-    }
-
-    public void addToReceipt(String name, double price){
-        String receipt_text = name + " $" + price +"\n";
-        customerReceipt.add(receipt_text);
-    }
+    public void showView(){ View.launch(); }
 }
