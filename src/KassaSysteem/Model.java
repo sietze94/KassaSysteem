@@ -5,9 +5,13 @@ import java.util.*;
 
 public class Model {
     private static ArrayList<String> customerReceipt = new ArrayList<>();
+    private ArrayList<String> scanned_history = new ArrayList<>();
     private LinkedList<Product> model_data_collection;
     SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
     private String dateString = format.format(new Date());
+
+    // register variables
+    private int register_num = 3;
 
 //    String current_product_name;
     private int minute;
@@ -21,6 +25,12 @@ public class Model {
     private double total_price = 0;
 
     //setters and other methods
+    public int getRegisterNumber(){return register_num;}
+
+    public void addProductToScannedHistory(String s){ scanned_history.add(s); }
+
+    public ArrayList<String> getScannedHistory(){ return scanned_history; }
+
     public Product getProduct(int index){ return model_data_collection.get(index); }
 
     public double getTotalPrice(){ return total_price; }

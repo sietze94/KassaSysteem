@@ -25,16 +25,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 
 public class View extends Application {
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private static ArrayList<String> customerReceipt = new ArrayList<>();
     private double total_price;
+
+//    private ImageView img_settings = new ImageView("/Users/sietzemin/IdeaProjects/fxtest2/src/KassaSysteem/images/settings_icon.png");
     Controller controller = KassaMain.getControllerMain(); // assign controller to local reference
     String s_current_user = "Sietze Min";
 
@@ -49,6 +55,10 @@ public class View extends Application {
         root.getRowConstraints().add(new RowConstraints(200)); // row 0 is 200 high
 
         root.setPadding(new Insets(20));
+
+//        img_settings.setPickOnBounds(true); // make transparent regions clickable too.
+//        img_settings.setOnMouseClicked((MouseEvent e) -> { controller.btnSettings(); });
+        Image img_settings = new Image(getClass().getResourceAsStream("settings_icon.png"));
 
         // Rij 0
         Label LproductToCome = new Label("Eerstvolgende product op lopendeband : ");
@@ -152,9 +162,11 @@ public class View extends Application {
         root.setValignment(LDetailProdBrand, VPos.TOP);
 
         // Rij 10
-        Label LDetailProdBarcode = new Label("Product barcode : ");
-        root.setHalignment(LDetailProdBarcode, HPos.RIGHT);
-        root.setValignment(LDetailProdBarcode, VPos.TOP);
+        Label LsettingsView = new Label("Settings");
+        LsettingsView.setGraphic(new ImageView(img_settings));
+        LsettingsView.setOnMouseClicked((MouseEvent e) ->{controller.btnSettings();});
+        root.setHalignment(LsettingsView, HPos.CENTER);
+
 
         // Toevoegen aan de root scene
         // Rij 0
@@ -190,6 +202,9 @@ public class View extends Application {
         root.add(LDyanmicTotalAmount,1,6);
         root.add(LcurrentUser,2,6);
 
+        // Rij 7
+        root.add(LsettingsView,2,7);
+
         new Thread(new Runnable(){
             @Override
             public void run(){
@@ -205,10 +220,8 @@ public class View extends Application {
                                 LprevValidThru.setText("Product houdbaar tot :" + controller.getModelPrevProductDetails()[3]);
 
                                 LCurrentDateTime.setText(controller.GetModelDateTime());
-
                                 LproductToCome.setText("Volgende product : " + controller.getModelNextProductName());
                                 String s_price = df2.format(controller.getModelTotalPrice());
-
                                 TfcurrentReceipt.setText(controller.getModelCustomerReceipt().toString() + "\n");
                                 LDyanmicTotalAmount.setText(s_price);
                             }

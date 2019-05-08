@@ -6,9 +6,6 @@ Used sources : https://stackoverflow.com/questions/25873769/launch-javafx-applic
  */
 
 package KassaSysteem;
-
-//import javafx.application.Application;
-
 import javafx.application.Application;
 
 import java.util.LinkedList;

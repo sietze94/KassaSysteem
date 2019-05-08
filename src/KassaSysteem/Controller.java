@@ -4,8 +4,7 @@ package KassaSysteem;
 // Author : Sietze Min
 
 import javax.sound.sampled.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -71,10 +70,16 @@ public class Controller {
 
     public void setCurrentProductDetails(){
         increaseProductIndex();
+        int index = product_index - 1;
+
         String current_product_name = getModelProduct(product_index).product_name;
         Double current_product_price = getModelProduct(product_index).product_price;
-        addProductToReceipt(model.getProduct(product_index - 1).product_name, model.getProduct(product_index -1).product_price);
-        model.setTotalPrice(model.getProduct(product_index -1).product_price);
+        addProductToReceipt(model.getProduct(index).product_name, model.getProduct(index).product_price);
+        model.setTotalPrice(model.getProduct(index).product_price);
+
+        // add product to scanned history
+        String product_history =  model.getTime() + " " + model.getProduct(index).product_barcode + " " + model.getProduct(index).product_name + " " + model.getProduct(index).product_price;
+        model.addProductToScannedHistory(product_history);
     }
 
     public void addToReceipt(String name, double price){
@@ -98,6 +103,28 @@ public class Controller {
 
 
     // BUTTON HANDLERS
+    public void btnSettings(){
+        System.out.println("Settings button clicked");
+        ViewSettings view_settings = new ViewSettings(KassaMain.getControllerMain()); // show settings screen
+    }
+
+    public void btnPrintRegisterHistory(){
+
+        // Write the history of the register to a text file on the desktop.
+        String filename = "register-" + String.valueOf(model.getRegisterNumber()) + "log_" + model.getDate();
+        try {
+          FileWriter fw = new FileWriter("/Users/sietzemin/Desktop/"  + filename+ ".txt");
+          PrintWriter pw = new PrintWriter(fw);
+          for(int i = 0; i < model.getScannedHistory().size(); i++){
+              String product_info = model.getScannedHistory().get(i);
+              pw.append(product_info +"\n");
+          }
+          pw.close();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void btnNextCustomer(){
         model.clearReceipt();
         model.clearTotalPrice();
@@ -116,6 +143,7 @@ public class Controller {
         // Wanneer de prijs niet 0 is, en er is betaald, pas dan laat de bon zien.
         if(model.getTotalPrice() != 0 && model.getHasPaid()){
             ViewReceipt view_receipt = new ViewReceipt(model.getTotalPrice());
+            // voeg de producten van de bon toe aan de geschiedenis.
 
             // Wanneer de prijs 0 is, dan kan er geen bon worden geprint.
         } else if(model.getTotalPrice() == 0) {
