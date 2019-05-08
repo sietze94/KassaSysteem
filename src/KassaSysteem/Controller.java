@@ -11,10 +11,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Controller {
-    View view; // local reference to the view obj
+    ViewRegister view; // local reference to the view obj
     Model model;
-    String testString = "Test string controller 1";
+    Register register;
     private int product_index = 0;
+
+    public void setRegister(Register register){this.register = register;}
+
+    public int getRegisterId(){ return register.getRegisterID(); }
 
     public String getModelDate(){ return model.getDate(); }
 
@@ -22,7 +26,7 @@ public class Controller {
 
     public void setModel(Model model){ this.model = model; }
 
-    public void setView(View view){ this.view = view; }
+    public void setView(ViewRegister view){ this.view = view; }
 
     public ArrayList<String> getModelCustomerReceipt(){ return model.getWholeReceipt(); }
 
@@ -106,8 +110,17 @@ public class Controller {
 
     // BUTTON HANDLERS
 
+    public void btnLogin(){
+        User c_user = new User("Sietze");
+        register.setCurrentUser(c_user);
+        System.out.println("Huidige gebruiker is ingelogd");
+
+        // if login succesvol
+    }
+
     public void btnLogout(){
-        System.out.println("Logout button pressed");
+        System.out.println("U bent succesvol uitgelogd");
+        ViewLogin login_view = new ViewLogin();
     }
 
     public void btnViewDailyRevenue(){
@@ -120,9 +133,10 @@ public class Controller {
     }
 
     public void btnPrintRegisterHistory(){
+        String os_type;
 
         // Write the history of the register to a text file on the desktop.
-        String filename = "register-" + String.valueOf(model.getRegisterNumber()) + "log_" + model.getDate();
+        String filename = "register-" + String.valueOf(getRegisterId()) + "log_" + model.getDate();
         try {
           FileWriter fw = new FileWriter("/Users/sietzemin/Desktop/"  + filename+ ".txt");
           PrintWriter pw = new PrintWriter(fw);
@@ -136,6 +150,10 @@ public class Controller {
         }
 
         writeJson();
+
+        // Try to determine the os version for path specification
+        os_type = System.getProperty("os.name");
+        System.out.println(os_type);
     }
 
     public void writeJson(){
@@ -234,8 +252,6 @@ public class Controller {
         System.out.println("Inside GetDataFromParser");
         model.setDataCollection(collection);
     }
-
-    public String getTestString(){ return "Hello from controller"; }
 
     public void playSound(){
         Thread thread = new Thread(new Runnable(){

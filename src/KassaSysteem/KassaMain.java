@@ -11,15 +11,14 @@ import javafx.application.Application;
 import java.util.LinkedList;
 
 public class KassaMain {
-    View view; // local referrence to the view obj
     Model model = new Model();
+    Register register;
     private static Controller controller = new Controller(); // local referrence to the controller obj
 
     public static void main(String[] args){
         // // kickstart the program
         System.out.println("## Booting KassaySysteem 1.0 ");
         KassaMain kassa_systeem = new KassaMain();
-//        kassa_systeem.getDataCollection(parser.placeholder_colll);// verkrijg de lijst van producten uit de parser.
 
         System.out.println("### Executing Main function (kassa_systeem.Main())");
         kassa_systeem.Main();
@@ -37,9 +36,10 @@ public class KassaMain {
         JsonParser parser = new JsonParser();
         parser.readFile("data.json"); // lees de data in (en verplaatst deze in een LinkedList van product objecten)
 
-        System.out.println("### 01 Main boots View");
-        this.view = new View();
-        controller.setView(view);
+        System.out.println("### 01 Main boots Register");
+        register = new Register(1,250, controller); // add a new register with some cash
+
+        controller.setRegister(register);
 
         System.out.println("### 02 Main creates controller object with model as arg");
         controller.setModel(model);
@@ -51,9 +51,11 @@ public class KassaMain {
             @Override
             public void run(){
                 System.out.println("Starting consumer thread");
-                view.showView();
+                register.showRegisterView();
             }
         });
         mainThread.start();
-    }
+
+
+    } // end of main
 }

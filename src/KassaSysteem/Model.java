@@ -11,7 +11,6 @@ public class Model {
     private String dateString = format.format(new Date());
 
     // register variables
-    private int register_num = 3;
     private double daily_total = 0; // dag omzet (per kassa, alle kassas )
 
 //    String current_product_name;
@@ -26,7 +25,6 @@ public class Model {
     private double total_price = 0;
 
     //setters and other methods
-    public int getRegisterNumber(){return register_num;}
 
     public void addProductToScannedHistory(String s){ scanned_history.add(s); }
 

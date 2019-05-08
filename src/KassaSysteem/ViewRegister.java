@@ -35,7 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 
-public class View extends Application {
+public class ViewRegister extends Application {
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private static ArrayList<String> customerReceipt = new ArrayList<>();
     private double total_price;
@@ -46,6 +46,8 @@ public class View extends Application {
 
     @Override
     public void start(Stage primaryStage){
+
+
         GridPane root = new GridPane();
         String current_product_name = controller.getModelProduct(0).product_name;
         root.getColumnConstraints().add(new ColumnConstraints(400)); // column 0 is 100 wide
@@ -65,7 +67,7 @@ public class View extends Application {
         root.setHalignment(LproductToCome, HPos.LEFT);
         root.setValignment(LproductToCome, VPos.TOP);
 
-        Label LRegisterNumber = new Label("Kassa 3");
+        Label LRegisterNumber = new Label("Kassa " + controller.getRegisterId());
         LRegisterNumber.setFont(Font.font("Cambria", 24));
         root.setHalignment(LRegisterNumber, HPos.CENTER);
         root.setValignment(LRegisterNumber, VPos.TOP);
@@ -162,7 +164,7 @@ public class View extends Application {
         root.setValignment(LDetailProdBrand, VPos.TOP);
 
         // Rij 10
-        Label LsettingsView = new Label("Settings");
+        Label LsettingsView = new Label("Instellingen");
         LsettingsView.setGraphic(new ImageView(img_settings));
         LsettingsView.setOnMouseClicked((MouseEvent e) ->{controller.btnSettings();});
         root.setHalignment(LsettingsView, HPos.CENTER);
@@ -240,7 +242,13 @@ public class View extends Application {
         primaryStage.setTitle("KassaSysteem SietzeKassa");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        ViewLogin login_view = new ViewLogin();
     } // end of start method
 
-    public void showView(){ View.launch(); }
+    public void showView(){
+        ViewRegister.launch();
+    }
+
+
 }
