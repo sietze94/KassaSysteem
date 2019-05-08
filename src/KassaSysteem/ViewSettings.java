@@ -46,15 +46,17 @@ public class ViewSettings {
         btnPrintRegisterLogs.setMinWidth(300);
         btnPrintRegisterLogs.setMinHeight(50);
 
-        Button btnViewDailyTurnOver = new Button("Bekijk dag totaal");
-        btnViewDailyTurnOver.setMinWidth(300);
-        btnViewDailyTurnOver.setMinHeight(50);
+        Button btnViewDailyRevenue = new Button("Bekijk dag totaal");
+        btnViewDailyRevenue.setOnAction(e -> controller.btnViewDailyRevenue());
+        btnViewDailyRevenue.setMinWidth(300);
+        btnViewDailyRevenue.setMinHeight(50);
 
         Button btnLogout = new Button("Uitloggen");
+        btnLogout.setOnAction(e -> controller.btnLogout());
         btnLogout.setMinWidth(300);
         btnLogout.setMinHeight(50);
 
-        VBox settingsBox = new VBox(btnPrintRegisterLogs,btnViewDailyTurnOver,btnLogout);
+        VBox settingsBox = new VBox(btnPrintRegisterLogs,btnViewDailyRevenue,btnLogout);
 
         Scene settingsScene = new Scene(settingsBox,300,150);
         Stage settingsStage = new Stage();

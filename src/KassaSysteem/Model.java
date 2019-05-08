@@ -12,6 +12,7 @@ public class Model {
 
     // register variables
     private int register_num = 3;
+    private double daily_total = 0; // dag omzet (per kassa, alle kassas )
 
 //    String current_product_name;
     private int minute;

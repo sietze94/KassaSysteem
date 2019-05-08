@@ -3,6 +3,8 @@ package KassaSysteem;
 // Date last modified : 04-05-2019
 // Author : Sietze Min
 
+import org.json.simple.JSONObject;
+
 import javax.sound.sampled.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -103,6 +105,15 @@ public class Controller {
 
 
     // BUTTON HANDLERS
+
+    public void btnLogout(){
+        System.out.println("Logout button pressed");
+    }
+
+    public void btnViewDailyRevenue(){
+        ViewDailyRevenue view_daily_revenue = new ViewDailyRevenue(KassaMain.getControllerMain());
+    }
+
     public void btnSettings(){
         System.out.println("Settings button clicked");
         ViewSettings view_settings = new ViewSettings(KassaMain.getControllerMain()); // show settings screen
@@ -123,7 +134,45 @@ public class Controller {
         } catch(IOException e){
             e.printStackTrace();
         }
+
+        writeJson();
     }
+
+    public void writeJson(){
+        JSONObject obj = new JSONObject();
+        ArrayList<JSONObject> jsonArray = new ArrayList<>();
+
+        for(int i = 0; i < model.getScannedHistory().size(); i++) {
+            String s = model.getScannedHistory().get(i);
+            String[] splited = s.split(" ");
+
+            for (int j = 0; j < splited.length; j++) {
+                System.out.println(splited[j]);
+            }
+
+            obj.put("date_scanned", splited[0]);
+            obj.put("product_barcode", splited[1]);
+            obj.put("product_price", splited[splited.length - 1]);
+
+            String product_n = "";
+            for (int k = 2; k < splited.length - 2; k++) {
+                System.out.println(splited[k]);
+                product_n = product_n + " " + splited[k];
+            }
+            obj.put("product_name ", product_n);
+            jsonArray.add(obj);
+        }
+
+        try (FileWriter file = new FileWriter("/Users/sietzemin/Desktop/test.json")){
+            for(JSONObject o : jsonArray){
+                file.write(obj.toJSONString() + "\n");
+            }
+            file.close();
+        } catch( IOException ex){
+            ex.printStackTrace();
+        }
+        System.out.println(obj);
+        }
 
     public void btnNextCustomer(){
         model.clearReceipt();
