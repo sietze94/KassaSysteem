@@ -12,7 +12,9 @@ public class Model {
 
     // register variables
     private double daily_total = 0; // dag omzet (per kassa, alle kassas )
+    private int[] user_input = new int[4];
 
+    private int clicked_counter = 0;
 //    String current_product_name;
     private int minute;
     private int hour;
@@ -25,6 +27,31 @@ public class Model {
     private double total_price = 0;
 
     //setters and other methods
+    public int getClickedCounter(){ return clicked_counter; }
+
+    public int[] getWholeUserInp(){ return user_input; }
+
+    public void setUser_input(){
+        clicked_counter = 0;
+        user_input = new int[4];
+    }
+
+    public void addUserInput(int inp){
+        int input = inp;
+        System.out.println("Value " + input);
+        System.out.println("counter " + clicked_counter);
+        try {
+            user_input[clicked_counter] = input;
+            System.out.println("value in array " + user_input[clicked_counter]);
+            clicked_counter++;
+
+            System.out.println("value of clicked couunter " + clicked_counter);
+        }
+
+        catch(IndexOutOfBoundsException e){
+            System.out.println("Kan niet meer toevoegen");
+        }
+    }
 
     public void addProductToScannedHistory(String s){ scanned_history.add(s); }
 

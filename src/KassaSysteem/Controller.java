@@ -1,6 +1,6 @@
 package KassaSysteem;
 
-// Date last modified : 04-05-2019
+// Date last modified : 09-05-2019
 // Author : Sietze Min
 
 import org.json.simple.JSONObject;
@@ -15,6 +15,24 @@ public class Controller {
     Model model;
     Register register;
     private int product_index = 0;
+//    private String user_inp = "";
+
+    public String getUserInput(){
+
+      if(model.getClickedCounter() == 1){
+          return "*";
+      }
+      if(model.getClickedCounter() == 2){
+            return "* *";
+      }
+      if(model.getClickedCounter() == 3){
+            return "* * *";
+      }
+      if(model.getClickedCounter() == 4){
+            return "* * * *";
+      }
+        return "";
+    }
 
     public void setRegister(Register register){this.register = register;}
 
@@ -110,16 +128,19 @@ public class Controller {
 
     // BUTTON HANDLERS
 
-    public void btnLogin(){
+    public void btnOk(){
         User c_user = new User("Sietze");
         register.setCurrentUser(c_user);
         System.out.println("Huidige gebruiker is ingelogd");
 
         // if login succesvol
+        playLoginSuccessFullSound();
     }
+    public void btnUserInput1(int i){ model.addUserInput(i); }
 
     public void btnLogout(){
         System.out.println("U bent succesvol uitgelogd");
+        model.setUser_input(); // clean the password entry field
         ViewLogin login_view = new ViewLogin();
     }
 
@@ -273,4 +294,25 @@ public class Controller {
         });
         thread.start();
     } // end of play sound method
+
+    public void playLoginSuccessFullSound(){
+        Thread thread = new Thread(new Runnable(){
+            public void run(){
+                try{
+                    String soundName = "/Users/sietzemin/IdeaProjects/fxtest2/src/KassaSysteem/logins.wav";
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(audioInputStream);
+                    clip.start();
+//                    clip.drain();
+//                    clip.close();
+                    Thread.sleep(2000);
+                } catch(IOException | UnsupportedAudioFileException | LineUnavailableException | InterruptedException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
 }

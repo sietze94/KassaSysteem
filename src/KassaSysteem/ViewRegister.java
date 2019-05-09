@@ -233,7 +233,7 @@ public class ViewRegister extends Application {
                 }
                 catch(InterruptedException ex){
                 }
-                LdynamicCurrentProduct.setText("Hello");
+//                LdynamicCurrentProduct.setText("Hello");
 
             }
         }).start();
