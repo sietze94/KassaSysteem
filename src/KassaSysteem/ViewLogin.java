@@ -122,51 +122,57 @@ public class ViewLogin {
         Button btnNum1 = new Button("1");
         btnNum1.setMinHeight(50);
         btnNum1.setMinWidth(117);
-        btnNum1.setOnAction(e -> controller.btnUserInput1(1));
+        btnNum1.setOnAction(e -> controller.btnUserInput("1"));
         viewLoginGridPane.add(btnNum1,0,5);
 
         Button btnNum2 = new Button("2");
         btnNum2.setMinHeight(50);
         btnNum2.setMinWidth(116);
-        btnNum2.setOnAction(e -> System.out.println("Button (2) pressed!"));
-
+        btnNum2.setOnAction(e -> controller.btnUserInput("2"));
         viewLoginGridPane.add(btnNum2,1,5);
 
         Button btnNum3 = new Button("3");
         btnNum3.setMinHeight(50);
         btnNum3.setMinWidth(117);
+        btnNum3.setOnAction(e -> controller.btnUserInput("3"));
         viewLoginGridPane.add(btnNum3,2,5);
 
         // Rij 6
         Button btnNum4 = new Button("4");
         btnNum4.setMinHeight(50);
         btnNum4.setMinWidth(117);
+        btnNum4.setOnAction(e -> controller.btnUserInput("4"));
         viewLoginGridPane.add(btnNum4,0,6);
 
         Button btnNum5 = new Button("5");
         btnNum5.setMinHeight(50);
         btnNum5.setMinWidth(116);
+        btnNum5.setOnAction(e -> controller.btnUserInput("5"));
         viewLoginGridPane.add(btnNum5,1,6);
 
         Button btnNum6 = new Button("6");
         btnNum6.setMinHeight(50);
         btnNum6.setMinWidth(117);
+        btnNum6.setOnAction(e -> controller.btnUserInput("6"));
         viewLoginGridPane.add(btnNum6,2,6);
 
         // Rij 7
         Button btnNum7 = new Button("7");
         btnNum7.setMinHeight(50);
         btnNum7.setMinWidth(117);
+        btnNum7.setOnAction(e -> controller.btnUserInput("7"));
         viewLoginGridPane.add(btnNum7,0,7);
 
         Button btnNum8 = new Button("8");
         btnNum8.setMinHeight(50);
         btnNum8.setMinWidth(116);
+        btnNum8.setOnAction(e -> controller.btnUserInput("8"));
         viewLoginGridPane.add(btnNum8,1,7);
 
         Button btnNum9 = new Button("9");
         btnNum9.setMinHeight(50);
         btnNum9.setMinWidth(117);
+        btnNum9.setOnAction(e -> controller.btnUserInput("9"));
         viewLoginGridPane.add(btnNum9,2,7);
 
         // Rij 8
@@ -179,11 +185,13 @@ public class ViewLogin {
         Button btnClr = new Button("C");
         btnClr.setMinHeight(50);
         btnClr.setMinWidth(116);
+        btnClr.setOnAction(e -> controller.btnClr());
         viewLoginGridPane.add(btnClr,1,8);
 
         Button btnNum0 = new Button("0");
         btnNum0.setMinHeight(50);
         btnNum0.setMinWidth(117);
+        btnNum0.setOnAction(e -> controller.btnUserInput("0"));
         viewLoginGridPane.add(btnNum0,2,8);
 
         new Thread(new Runnable(){
@@ -207,9 +215,16 @@ public class ViewLogin {
         }).start();
 
         btnOk.setOnAction(e -> {
-            controller.btnOk();
-            loginViewStage.close();
-            loginStage.close();
+            // First thing, current user input needs to be checked against the password.
+            controller.checkPasscode();
+            lblPasscode.setTextFill(Color.web("#ef3251"));
+
+            if(controller.getPasscodeBool()){
+//                lblPasscode.setTextFill(Color.web("#77ce87"));
+                loginViewStage.close();
+                controller.btnOk();
+                loginStage.close();
+            }
         });
 
         // Set border

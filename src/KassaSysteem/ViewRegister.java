@@ -78,6 +78,13 @@ public class ViewRegister extends Application {
         root.setValignment(LCurrentDateTime, VPos.TOP);
 
         // Rij 1
+        Button btnSearchProd = new Button("Zoeken");
+        btnSearchProd.setMinWidth(200);
+        btnSearchProd.setMinHeight(50);
+        root.setHalignment(btnSearchProd, HPos.CENTER);
+        btnSearchProd.setOnAction(e -> controller.btnSearchProd());
+
+        // Rij 2
         Label LpreviouslyScannedProd = new Label("Laatst gescanned : ");
         root.setHalignment(LpreviouslyScannedProd,HPos.LEFT);
 
@@ -90,11 +97,11 @@ public class ViewRegister extends Application {
         root.setHalignment(BtnPrintReceipt, HPos.CENTER);
         BtnPrintReceipt.setOnAction(e -> controller.btnModelPrintReceipt());
 
-        // Rij 2
+        // Rij 3
         Label LdynamicCurrentProduct = new Label(current_product_name);
         root.setHalignment(LdynamicCurrentProduct,HPos.CENTER);
 
-        // Rij 3
+        // Rij 4
         Label LprevScannedBrand = new Label("Merk : ");
         root.setHalignment(LprevScannedBrand, HPos.LEFT);
 
@@ -104,7 +111,7 @@ public class ViewRegister extends Application {
         root.setHalignment(BtnPaymentMethodCredit, HPos.CENTER);
         BtnPaymentMethodCredit.setOnAction(e -> controller.btnPaymentAccepted("Pin"));
 
-        // Rij 4
+        // Rij 5
         Label LprevScannedBarcode = new Label("Barcode : ");
         root.setHalignment(LprevScannedBrand, HPos.LEFT);
 
@@ -121,7 +128,7 @@ public class ViewRegister extends Application {
         root.setHalignment(BtnScanProduct, HPos.CENTER);
         BtnScanProduct.setOnAction(e -> controller.btnScan());
 
-        // Rij 5
+        // Rij 6
         Label LprevValidThru = new Label("Houdbaar tot : ");
         root.setHalignment(LprevValidThru, HPos.LEFT);
 
@@ -132,14 +139,14 @@ public class ViewRegister extends Application {
         root.setHalignment(BtnNextCustomer, HPos.CENTER);
         BtnNextCustomer.setOnAction(e -> controller.btnNextCustomer());
 
-        // Rij 6
+        // Rij 7
         Label LcurrentReceiptTF = new Label("Huidige klant bon");
         root.setHalignment(LcurrentReceiptTF, HPos.LEFT);
 
         Label LTotalAmount = new Label("Total bedrag E");
         root.setHalignment(LTotalAmount, HPos.CENTER);
 
-        // Rij 7
+        // Rij 8
         TextArea TfcurrentReceipt = new TextArea();
 //        TfcurrentReceipt.setDisable(true);
         TfcurrentReceipt.setMinWidth(100);
@@ -153,22 +160,23 @@ public class ViewRegister extends Application {
         Label LcurrentUser = new Label("Medewerker :" + s_current_user);
         root.setHalignment(LcurrentUser, HPos.CENTER);
 
-        // Rij 8
+        // Rij 9
         Label LDetailProdName = new Label("Product naam : ");
         root.setHalignment(LDetailProdName, HPos.RIGHT);
         root.setValignment(LDetailProdName, VPos.TOP);
 
-        // Rij 9
+        // Rij 10
         Label LDetailProdBrand = new Label("Product merk : ");
         root.setHalignment(LDetailProdBrand, HPos.RIGHT);
         root.setValignment(LDetailProdBrand, VPos.TOP);
 
-        // Rij 10
+        // Rij 11
         Label LsettingsView = new Label("Instellingen");
         LsettingsView.setGraphic(new ImageView(img_settings));
         LsettingsView.setOnMouseClicked((MouseEvent e) ->{controller.btnSettings();});
         root.setHalignment(LsettingsView, HPos.CENTER);
-
+        root.setValignment(LsettingsView, VPos.TOP);
+        LsettingsView.setPadding(new Insets(-50,0,0,0));
 
         // Toevoegen aan de root scene
         // Rij 0
@@ -176,36 +184,39 @@ public class ViewRegister extends Application {
         root.add(LRegisterNumber, 1,0);
         root.add(LCurrentDateTime, 2,0);
 
+        // Rij 1
+        root.add(btnSearchProd,2,1);
+
         // Rij 2
-        root.add(LpreviouslyScannedProd,0,1);
-        root.add(LCurrentProduct,1,1);
-        root.add(BtnPrintReceipt,2,1);
+        root.add(LpreviouslyScannedProd,0,2);
+        root.add(LCurrentProduct,1,2);
+        root.add(BtnPrintReceipt,2,2);
 
         // Rij 3
-        root.add(LprevScannedBrand,0,2);
-        root.add(LdynamicCurrentProduct,1,2);
-        root.add(BtnPaymentMethodCredit,2,2);
+        root.add(LprevScannedBrand,0,3);
+        root.add(LdynamicCurrentProduct,1,3);
+        root.add(BtnPaymentMethodCredit,2,3);
 
         // Rij 4
-        root.add(LprevScannedBarcode,0,3);
-        root.add(BtnScanProduct,1,3);
-        root.add(BtnPaymentMethodCash,2,3);
+        root.add(LprevScannedBarcode,0,4);
+        root.add(BtnScanProduct,1,4);
+        root.add(BtnPaymentMethodCash,2,4);
 
         // Rij 5
-        root.add(LprevValidThru,0,4);
-        root.add(BtnNextCustomer,2,4);
+        root.add(LprevValidThru,0,5);
+        root.add(BtnNextCustomer,2,5);
 
         // Rij 6
-        root.add(LcurrentReceiptTF,0,5);
-        root.add(LTotalAmount,1,5);
+        root.add(LcurrentReceiptTF,0,6);
+        root.add(LTotalAmount,1,6);
 
         // Rij 7
-        root.add(TfcurrentReceipt,0,6);
-        root.add(LDyanmicTotalAmount,1,6);
-        root.add(LcurrentUser,2,6);
+        root.add(TfcurrentReceipt,0,7);
+        root.add(LDyanmicTotalAmount,1,7);
+        root.add(LcurrentUser,2,7);
 
         // Rij 7
-        root.add(LsettingsView,2,7);
+        root.add(LsettingsView,2,8);
 
         new Thread(new Runnable(){
             @Override
@@ -239,10 +250,10 @@ public class ViewRegister extends Application {
         }).start();
 
         Scene scene = new Scene(root, 1200,700);
+
         primaryStage.setTitle("KassaSysteem SietzeKassa");
         primaryStage.setScene(scene);
         primaryStage.show();
-
         ViewLogin login_view = new ViewLogin();
     } // end of start method
 

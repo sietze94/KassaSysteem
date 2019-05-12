@@ -15,7 +15,20 @@ public class Controller {
     Model model;
     Register register;
     private int product_index = 0;
-//    private String user_inp = "";
+
+    // < ======== Login functions ======== >
+
+    public Boolean getPasscodeBool(){ return model.getBoolPasscode(); }
+
+    public void checkPasscode(){
+        String passcode = "";
+        for(int i = 0; i < model.getUserInpSize(); i++){ passcode += model.getUserInp(i); }
+
+        if(passcode.equals(model.getPassCode())){
+            System.out.println("match!");
+            model.setBoolPasscode(true); // if match, then set boolean to true.
+        }
+    }
 
     public String getUserInput(){
 
@@ -31,20 +44,38 @@ public class Controller {
       if(model.getClickedCounter() == 4){
             return "* * * *";
       }
-        return "";
+
+      if(model.getClickedCounter() > 4){
+          return "te lang";
+      }
+      return "";
     }
 
     public void setRegister(Register register){this.register = register;}
+
+    public void setModel(Model model){ this.model = model; }
+
+    public void setView(ViewRegister view){ this.view = view; }
+
+    public void setCurrentProductDetails(){
+        increaseProductIndex();
+        int index = product_index - 1;
+
+        String current_product_name = getModelProduct(product_index).product_name;
+        Double current_product_price = getModelProduct(product_index).product_price;
+        addProductToReceipt(model.getProduct(index).product_name, model.getProduct(index).product_price);
+        model.setTotalPrice(model.getProduct(index).product_price);
+
+        // add product to scanned history
+        String product_history =  model.getTime() + " " + model.getProduct(index).product_barcode + " " + model.getProduct(index).product_name + " " + model.getProduct(index).product_price;
+        model.addProductToScannedHistory(product_history);
+    }
 
     public int getRegisterId(){ return register.getRegisterID(); }
 
     public String getModelDate(){ return model.getDate(); }
 
     public String getModelTime(){ return model.getTime(); }
-
-    public void setModel(Model model){ this.model = model; }
-
-    public void setView(ViewRegister view){ this.view = view; }
 
     public ArrayList<String> getModelCustomerReceipt(){ return model.getWholeReceipt(); }
 
@@ -92,20 +123,6 @@ public class Controller {
         return details;
     }
 
-    public void setCurrentProductDetails(){
-        increaseProductIndex();
-        int index = product_index - 1;
-
-        String current_product_name = getModelProduct(product_index).product_name;
-        Double current_product_price = getModelProduct(product_index).product_price;
-        addProductToReceipt(model.getProduct(index).product_name, model.getProduct(index).product_price);
-        model.setTotalPrice(model.getProduct(index).product_price);
-
-        // add product to scanned history
-        String product_history =  model.getTime() + " " + model.getProduct(index).product_barcode + " " + model.getProduct(index).product_name + " " + model.getProduct(index).product_price;
-        model.addProductToScannedHistory(product_history);
-    }
-
     public void addToReceipt(String name, double price){
         String receipt_text = name + " $" + price +"\n";
         model.setReceipt(receipt_text);
@@ -125,23 +142,85 @@ public class Controller {
         return product_index;
     }
 
+    public String GetModelDateTime(){
+        String date = model.getDate();
+        String time = model.getTime();
 
-    // BUTTON HANDLERS
+        return date + " / " + time;
+    }
+
+    // Gets the data from the parser and stores it in the model.
+    public void GetDataFromParserToModel(LinkedList<Product> collection){
+        System.out.println("Inside GetDataFromParser");
+        model.setDataCollection(collection);
+    }
+
+    public void playSound(){
+        Thread thread = new Thread(new Runnable(){
+            public void run(){
+                try{
+                    String soundName = "/Users/sietzemin/IdeaProjects/fxtest2/src/media.io_beep.wav";
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(audioInputStream);
+                    clip.start();
+//                    clip.drain();
+//                    clip.close();
+                    Thread.sleep(2000);
+                } catch(IOException | UnsupportedAudioFileException | LineUnavailableException | InterruptedException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    } // end of play sound method
+
+    public void playLoginSuccessFullSound(){
+        Thread thread = new Thread(new Runnable(){
+            public void run(){
+                try{
+                    String soundName = "/Users/sietzemin/IdeaProjects/fxtest2/src/KassaSysteem/logins.wav";
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(audioInputStream);
+                    clip.start();
+//                    clip.drain();
+//                    clip.close();
+                    Thread.sleep(2000);
+                } catch(IOException | UnsupportedAudioFileException | LineUnavailableException | InterruptedException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
+
+    //<======== BUTTON HANDLERS ======== >
+    public void btnSearchProd(){
+        System.out.println("Search button pressed");
+    }
+
+    public void btnClr(){ model.clrLastUserInp(); }
 
     public void btnOk(){
         User c_user = new User("Sietze");
         register.setCurrentUser(c_user);
         System.out.println("Huidige gebruiker is ingelogd");
 
-        // if login succesvol
+//        model.checkPasscode();
         playLoginSuccessFullSound();
     }
-    public void btnUserInput1(int i){ model.addUserInput(i); }
+
+    public void btnUserInput(String inp){ model.addUserInput(inp); }
 
     public void btnLogout(){
         System.out.println("U bent succesvol uitgelogd");
-        model.setUser_input(); // clean the password entry field
+        model.resetUserInp(); // clean the password entry field
         ViewLogin login_view = new ViewLogin();
+        model.setBoolPasscode(false);
     }
 
     public void btnViewDailyRevenue(){
@@ -247,13 +326,6 @@ public class Controller {
 
     }
 
-    public String GetModelDateTime(){
-        String date = model.getDate();
-        String time = model.getTime();
-
-        return date + " / " + time;
-    }
-
     public void btnPaymentAccepted(String value){
         String payment_method = "";
         model.setHasPaid(true);
@@ -268,51 +340,4 @@ public class Controller {
         }
     }
 
-    // Gets the data from the parser and stores it in the model.
-    public void GetDataFromParserToModel(LinkedList<Product> collection){
-        System.out.println("Inside GetDataFromParser");
-        model.setDataCollection(collection);
-    }
-
-    public void playSound(){
-        Thread thread = new Thread(new Runnable(){
-            public void run(){
-                try{
-                    String soundName = "/Users/sietzemin/IdeaProjects/fxtest2/src/media.io_beep.wav";
-                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(audioInputStream);
-                    clip.start();
-//                    clip.drain();
-//                    clip.close();
-                    Thread.sleep(2000);
-                } catch(IOException | UnsupportedAudioFileException | LineUnavailableException | InterruptedException ex)
-                {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    } // end of play sound method
-
-    public void playLoginSuccessFullSound(){
-        Thread thread = new Thread(new Runnable(){
-            public void run(){
-                try{
-                    String soundName = "/Users/sietzemin/IdeaProjects/fxtest2/src/KassaSysteem/logins.wav";
-                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(audioInputStream);
-                    clip.start();
-//                    clip.drain();
-//                    clip.close();
-                    Thread.sleep(2000);
-                } catch(IOException | UnsupportedAudioFileException | LineUnavailableException | InterruptedException ex)
-                {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    }
 }

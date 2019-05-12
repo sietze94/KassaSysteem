@@ -72,7 +72,7 @@ public class ViewSettings {
         btnViewDailyRevenue.setMinHeight(50);
 
         Button btnLogout = new Button("Uitloggen");
-        btnLogout.setOnAction(e -> controller.btnLogout());
+//        btnLogout.setOnAction(e -> controller.btnLogout());
         btnLogout.setMinWidth(300);
         btnLogout.setMinHeight(50);
 
@@ -85,5 +85,10 @@ public class ViewSettings {
         settingsStage.setTitle("Instellingen");
         settingsStage.setScene(settingsScene);
         settingsStage.show();
+
+        btnLogout.setOnAction(e -> {
+            controller.btnLogout();
+            settingsStage.close();
+        });
     }
 }
